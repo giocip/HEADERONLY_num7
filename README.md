@@ -9,7 +9,7 @@ for educational school, web e-commerce developing, accounting apps and general m
 
 ---
 
-## Installation C++ num7.h and num7.cpp header files
+## Installation C++ num7.h header file
 
 ### Create a directory on your SYSTEM MULTIPLATFORM and
 
