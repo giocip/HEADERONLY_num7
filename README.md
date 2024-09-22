@@ -13,7 +13,7 @@ for educational school, web e-commerce developing, accounting apps and general m
 
 ### Create a directory on your SYSTEM MULTIPLATFORM and
 
-- With your favourite editor create num7.h and num7.cpp file and copy it along with your c++ app.cpp file in that same folder
+- With your favourite editor create num7.h and copy it along with your c++ app.cpp file in that same folder
 
 
 - Ok!
