@@ -1186,7 +1186,7 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         }
         /// NUM IN-LINE /// CONVERT NUM TO i64 (SIGNED 64-BIT INTEGER) RANGE BETWEEN -9223372036854775808 TO 9223372036854775807, CODE: NUM a("123.0e12"); i64 A = a.to_i64(); print(A, "\n"); //123000000000000
         i64 to_i64() {
-            static char* p, * ram;
+            static char* ram;
             static i64 L, result;
             NUM MIN("-9223372036854775808.0"), MAX("9223372036854775807.0");
             if (*this < MIN || *this > MAX) {
@@ -1740,7 +1740,10 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
             free(P[0]); free(s); t_op = strcat(op, ".0");
             root = t_op.sqrt(0);
             s = exp2num(root);
-            strncpy(op, s, L); strncpy(op + L, ".", 1); strncpy(op + L + 1, s + L, d); op[L + 1 + d] = '\0';
+            strncpy(op, s, L); 
+            //strncpy(op + L, ".", 1); 
+            *(op + L) = '.';
+            strncpy(op + L + 1, s + L, d); op[L + 1 + d] = '\0';
             free(s); root = op; free(op);
             return root;
         }
@@ -1764,9 +1767,10 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
             char* SN = (char*)malloc(((i64)strlen(sn) + W + 4) * sizeof(char)); //RAM DYNAMIC ALLOCATION
             if (!SN) raise_exit("OUT OF RAM MEMORY => root_i", this->sprint_fields());
             rm_c(sn, '.');      //REMOVE DOT CHARACTER (.)
-            strcpy(SN, sn); free(sn);
+            strcpy(SN, sn); 
             if (W >= 0) { pad = strpads0(W); strcat(SN, pad); free(pad); }
             else SN[(i64)strlen(sn) + W] = '\0'; //FIXING STRING 
+            free(sn);
             strcat(SN, ".0");
             z = n = SN; free(SN);
             s = z + 1;
@@ -2622,8 +2626,10 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         bF = (char*)malloc(DIM); if (!bF) raise_exit("OUT OF RAM MEMORY => subfs", op1);  //RAM DYNAMIC ALLOCATION
         RE = (char*)malloc(DIM); if (!RE) raise_exit("OUT OF RAM MEMORY => subfs", op1); //RAM DYNAMIC ALLOCATION                              
         strcpy(a, op1); strcpy(b, op2); //op1=>a  op2=>b
-        if (a[0] == '0') lstripf0(a); if (a[a_L - 1] == '0') rstripf0(a); //CLEARING ZEROS (020.00100 => 20.001)
-        if (b[0] == '0') lstripf0(b); if (b[b_L - 1] == '0') rstripf0(b);
+        if (a[0] == '0') lstripf0(a); 
+        if (a[a_L - 1] == '0') rstripf0(a); //CLEARING ZEROS (020.00100 => 20.001)
+        if (b[0] == '0') lstripf0(b); 
+        if (b[b_L - 1] == '0') rstripf0(b);
         //CHECK DIFFERENCE WITH ZERO OPERANDS
         if (!strcmp(b, "0.0")) { free(b); free(aI); free(aF); free(bI); free(bF); free(RE); return a; } //b => ZERO SUBTRAHEND
         if (!strcmp(a, "0.0")) { //a => ZERO MINUEND
@@ -2911,8 +2917,10 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         a = (char*)malloc(DIM * 2); if (!a) raise_exit("OUT OF RAM MEMORY => mulfs", op1);  //RAM DYNAMIC ALLOCATION
         b = (char*)malloc(DIM * 2); if (!b) raise_exit("OUT OF RAM MEMORY => mulfs", op1); //RAM DYNAMIC ALLOCATION
         strcpy(a, op1); strcpy(b, op2); //op1 => a  op2 => b 
-        if (a[0] == '0') lstripf0(a); if (a[a_L - 1] == '0') rstripf0(a); //CLEARING ZEROS (020.00100 => 20.001)
-        if (b[0] == '0') lstripf0(b); if (b[b_L - 1] == '0') rstripf0(b);
+        if (a[0] == '0') lstripf0(a); 
+        if (a[a_L - 1] == '0') rstripf0(a); //CLEARING ZEROS (020.00100 => 20.001)
+        if (b[0] == '0') lstripf0(b); 
+        if (b[b_L - 1] == '0') rstripf0(b);
         if (!strcmp(a, "0.0")) { free(b); return a; }    //ZERO OPERAND 1 RETURN op1
         if (!strcmp(b, "0.0")) { free(a); return b; }   //ZERO OPERAND 2 RETURN op2
         if (!strcmp(a, "1.0")) { free(a); return b; }  //ONE OPERAND a RETURN op2
@@ -2971,7 +2979,8 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         char* s = (char*)malloc((div_L + 16) * sizeof(char)); // + NULL //RAM DYNAMIC ALLOCATION
         if (!s) raise_exit("OUT OF RAM MEMORY => invfs", div);
         strcpy(s, div);
-        if (s[0] == '0') lstripf0(s); if (s[div_L - 1] == '0') rstripf0(s); //CLEARING ZEROS (020.00100 => 20.001)
+        if (s[0] == '0') lstripf0(s); 
+        if (s[div_L - 1] == '0') rstripf0(s); //CLEARING ZEROS (020.00100 => 20.001)
         if (check) {
             if (!strcmp(s, "0.0")) { free(s); raise("DIVISION BY ZERO => invfs", div); return NULL; }
             if (!strcmp(s, "1.0")) return strcpy(s, "1.0"); //INVERSE OF 1 EQUALS 1
@@ -3013,8 +3022,10 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         char* a = (char*)malloc(DIM); if (!a) raise_exit("OUT OF RAM MEMORY => divfs", op1);  //RAM DYNAMIC ALLOCATION
         char* b = (char*)malloc(DIM); if (!b) raise_exit("OUT OF RAM MEMORY => divfs", op1); //RAM DYNAMIC ALLOCATION
         strcpy(a, op1); strcpy(b, op2); //op1 = > a, op2 => b
-        if (a[0] == '0') lstripf0(a); if (a[a_L - 1] == '0') { rstripf0(a); a_L = (i64)strlen(a); }  //CLEARING ZEROS (020.00100 => 20.001)
-        if (b[0] == '0') lstripf0(b); if (b[b_L - 1] == '0') { rstripf0(b); b_L = (i64)strlen(b); }
+        if (a[0] == '0') lstripf0(a); 
+        if (a[a_L - 1] == '0') { rstripf0(a); a_L = (i64)strlen(a); }  //CLEARING ZEROS (020.00100 => 20.001)
+        if (b[0] == '0') lstripf0(b); 
+        if (b[b_L - 1] == '0') { rstripf0(b); b_L = (i64)strlen(b); }
         while (a[a_L - 1] == '0' && a[a_L - 2] == '.' && b[b_L - 1] == '0' && b[b_L - 2] == '.') { //12300.0:100.0=123:1=123
             i64 za = 0, zb = 0; //ZEROs
             i64 c = a_L - 3;
@@ -3338,7 +3349,8 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         char* a = (char*)malloc(DIM); if (!a) raise_exit("OUT OF RAM MEMORY => strint_cmp", op1); //RAM DYNAMIC ALLOCATION
         char* b = (char*)malloc(DIM); if (!b) raise_exit("OUT OF RAM MEMORY => strint_cmp", op1);//RAM DYNAMIC ALLOCATION
         strcpy(a, op1); strcpy(b, op2); //op1 => a op2 => b
-        if (a[0] == '0') stripi0(a); if (b[0] == '0') stripi0(b); //CLEAR ZEROS
+        if (a[0] == '0') stripi0(a); 
+        if (b[0] == '0') stripi0(b); //CLEAR ZEROS
         a_L = (i64)strlen(a); b_L = (i64)strlen(b);
         if (a_L > b_L) COMPARE = 1;
         else if (a_L < b_L) COMPARE = -1;
@@ -3914,7 +3926,7 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         static NUM result;
         result = divf(op1, op2, dp); //dp => DECIMAL PRECISION
         if (!strcmp(result.C, "0.0")) return result; //-0.0 NOT ALLOWED!
-        result.S = (!op1->S && !op2->S || op1->S && op2->S) ? 0 : 1;
+        result.S = ((!op1->S && !op2->S) || (op1->S && op2->S)) ? 0 : 1;
         return result;
     }
     /// NUM OUT-LINE /// ABSOLUTE ARBITRARY-PRECISION FLOATING-POINT DIVISION WITH NUM FLOATING-POINT QUOTIENT (UNSIGNED), CODE: NUM a("7564322979.0"), b("3977544159.0"); NUM R = divf(&a, &b); R.print("\n");  //1.901757133703766882553924148652
@@ -3940,7 +3952,7 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         *   \endcode
         */
         static NUM R;
-        static char* p, * sci;
+        static char* p;
         static char** q;
         const char* Es;
         R.E = n->E - div->E;                                 //SUBTRACTING... EXPONENTS
@@ -3981,7 +3993,7 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         static NUM SP; //SIGNED PRODUCT
         SP = mulf(op1, op2);
         if (!strcmp(SP.C, "0.0")) return SP; //-0.0 NOT ALLOWED!
-        SP.S = (!op1->S && !op2->S || op1->S && op2->S) ? 0 : 1;
+        SP.S = ((!op1->S && !op2->S) || (op1->S && op2->S)) ? 0 : 1;
         return SP;
     }
     /// NUM OUT-LINE /// ABSOLUTE ARBITRARY-PRECISION FLOATING-POINT NUM MULTIPLICATION (UNSIGNED), CODE: NUM a("7564322979.0"), b("3977544159.0"); NUM R = mulf(&a, &b); R.print("\n");  //30087428681910929661.0
@@ -4006,7 +4018,7 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         *   \endcode
         */
         static NUM R;
-        static char* p, * sci;
+        static char* p;
         static char** q;
         const char* Es;
         p = mulfs(a->C, b->C, false); //MULTIPLYING... COEFFICIENTS
@@ -4167,7 +4179,7 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         else if (A[0] == '+') { strcpy(A, A + 1); NEG = 0; }
         else NEG = 0;
         char* AI, * AF;
-        i64 len_A = (i64)strlen(A);
+        //i64 len_A = (i64)strlen(A);
         stripf0(A);                 //CLEAR ZEROS
         char** AA = split(A, "."); //BASE A INTEGER.FRACTIONAL
         AI = (char*)malloc(((i64)strlen(AA[0]) + 1) * sizeof(char));   //INTEGER PART OF A //RAM DYNAMIC ALLOCATION
@@ -4588,7 +4600,7 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
     /// NUM OUT-LINE /// RETURN LOCALIZED FORMATTED STRING -NEED: free(), CODE: NUM a("3_000.0"); char *p = format(a, 2, ','); print(p, "\n"); free(p); //3,000.00
     char* format(NUM a, i64 d, char SEP1000, int SIGN) { //DEFAULT ARGs: (NUM, i64 d = 2, char SEP1000 = ',', int SIGN = 0)
         char C[2];
-        int NEG = 0; //POSITIVE
+        //int NEG = 0; //POSITIVE
         if (SEP1000 == ',') { C[0] = '.'; C[1] = '\0'; } //DEFAULT THOUSANDTH SEPARATOR 
         else { SEP1000 = '.'; C[0] = ','; C[1] = '\0'; }
         char* n = exp2num(a);
@@ -4611,7 +4623,8 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
             if (d <= 0 && !strcmp(P[1], "0")) {
                 free(P[0]); free(n);
                 if (SIGN && !a.S) { strcpy(s, "+"); strcat(s, f); }
-                else strcpy(s, f); free(f);
+                else strcpy(s, f); 
+                free(f);
                 return s;
             }
             strcat(f, C); strcat(f, P[1]);
@@ -4630,7 +4643,8 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         strcat(f, C); strcat(f, P[1]); char* pads = strpads0(diff); strcat(f, pads); free(pads);
         free(P[0]); free(n);
         if (SIGN && !a.S) { strcpy(s, "+"); strcat(s, f); }
-        else strcpy(s, f); free(f);
+        else strcpy(s, f); 
+        free(f);
         return s;
     }
     /// NUM OUT-LINE /// RETURN NUM STRING FORMATTED WITH FRACTIONAL PART d ZERO PADDED WHEN REQUIRED -NEED: free(), CODE: NUM a("3.0"); char *p = format0(a); print(p, "\n"); free(p); //3.00
