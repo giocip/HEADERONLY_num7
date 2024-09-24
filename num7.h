@@ -1186,7 +1186,7 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         }
         /// NUM IN-LINE /// CONVERT NUM TO i64 (SIGNED 64-BIT INTEGER) RANGE BETWEEN -9223372036854775808 TO 9223372036854775807, CODE: NUM a("123.0e12"); i64 A = a.to_i64(); print(A, "\n"); //123000000000000
         i64 to_i64() {
-            static char* ram;
+            static char* p, * ram;
             static i64 L, result;
             NUM MIN("-9223372036854775808.0"), MAX("9223372036854775807.0");
             if (*this < MIN || *this > MAX) {
@@ -1202,7 +1202,7 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         }
         /// NUM IN-LINE /// CONVERT NUM TO I64 (UNSIGNED 64-BIT INTEGER) RANGE BETWEEN 0 TO 18446744073709551615, CODE: NUM a("18446744073709551614.0"); printf("%llu\n", a.to_I64() + 1); //18446744073709551615
         I64 to_I64() {
-            static char* p, * ram;
+            static char* ram;
             static I64 L, result;
             NUM MIN("0.0"), MAX("18446744073709551615.0");
             if (*this < MIN || *this > MAX) {
