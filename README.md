@@ -441,7 +441,7 @@ double TO NUM CONVERSION ARRAY:
 Q. I usually try to add 0.1 to 0.2 in C++ with this code:  
 
 	double a = 0.1, b = 0.2;
-	print(a + b == 0.3);   //0 => false
+	printf("%d\n", a + b == 0.3);   //0 => false
 and the comparing number result is:  
 
 	0 (false)  
