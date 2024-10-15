@@ -117,11 +117,13 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
     I64* I128add(I64[], I64[]);
     NUM& I128addis(const char*, const char*);
     char* invfs(const char*, i64 d = 30, int check = 1);
+    int is_zero(NUM*);    
+    int is_positive(NUM*);
+    int is_negative(NUM*);
     int is_even(NUM*);
     int is_odd(NUM*);
     int is_int(NUM*);
     int is_float(NUM*);
-    int is_zero(NUM*);
     int is_prime(NUM*);
     const char* is_strfmt_exp(const char*);
     const char* is_strfmt_int(const char*);
@@ -4539,6 +4541,14 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
     /// NUM OUT-LINE /// CHECK IF POINTED NUM OBJECT IS ZERO, CODE: NUM a("0.0"); print(is_zero(&a), "\n");  //1
     int is_zero(NUM* n) {
         return (strcmp("0.0", n->C)) ? 0 : 1;
+    }
+    /// NUM OUT-LINE /// CHECK IF POINTED NUM OBJECT IS POSITIVE, CODE: NUM a(1); print(is_positive(&a), " "); a--; print(is_positive(&a), "\n"); //1 0
+    int is_positive(NUM* n) {
+        return n->is_positive();
+    }
+    /// NUM OUT-LINE /// CHECK IF POINTED NUM OBJECT IS NEGATIVE, CODE: NUM a(-1); print(is_negative(&a), " "); a++; print(is_negative(&a), "\n"); //1 0
+    int is_negative(NUM* n) {
+        return n->is_negative();
     }
     /// NUM OUT-LINE /// CHECK IF POINTED NUM OBJECT IS INTEGER VALUE, CODE: NUM a("7.0"); print(is_int(&a), "\n");  //1
     int is_int(NUM* n) {
