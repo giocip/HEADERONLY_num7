@@ -17,6 +17,7 @@
 #include <string>            
 #include <cstring>            //FOR LINUX O.S. #include <cstring> without #include <string> 
 #include <math.h>            //FOR LINUX ONLY
+#include <cstdint>          //FOR LINUX ONLY
 using namespace std;
 ///////////////////////////////////////////////// num7 NAMESPACE START
 namespace num7 {          // STARTING CURLY BRACKET num7 namespace
