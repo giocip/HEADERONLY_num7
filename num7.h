@@ -3548,7 +3548,9 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         */
         static char* p;
         static i64 NEG0, NEG1;
-        i64 DIM = (i64)(strlen(sn) + 4) * sizeof(char); //1=>NULL 2=> .0
+        i64 sn_L = (i64)strlen(sn);
+        if (sn_L < 5) return NULL; //MIN ARGUMENT LENGTH
+        i64 DIM = (i64)(sn_L + 4) * sizeof(char); //1=>NULL 2=> .0
         char* r1 = (char*)malloc(DIM);
         if (!r1)  raise_exit("OUT OF RAM MEMORY => is_strfmt_exp", sn); //RAM DYNAMIC ALLOCATION
         char* be0 = (char*)malloc(DIM);       //BASE
