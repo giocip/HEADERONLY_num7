@@ -2281,7 +2281,7 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
         i64 a_L, b_L, dim, i, za = 0, zb = 0, Z = 0; //VARIABLES
         char* a, * b;       //RAM POINTER VARs
         a_L = (i64)strlen(op1); b_L = (i64)strlen(op2);
-        a = (char*)malloc((a_L + 4) * sizeof(char)); if (!a) raise_exit("OUT OF RAM MEMORY => mulis", op1);    //RAM DYNAMIC ALLOCATIO
+        a = (char*)malloc((a_L + 4) * sizeof(char)); if (!a) raise_exit("OUT OF RAM MEMORY => mulis", op1);    //RAM DYNAMIC ALLOCATION
         b = (char*)malloc((b_L + 4) * sizeof(char)); if (!b) raise_exit("OUT OF RAM MEMORY => mulis", op1);   //RAM DYNAMIC ALLOCATION
         strcpy(a, op1); if (a[0] == '0') { stripi0(a); a_L = (i64)strlen(a); } //REMOVE NO VALUE ZEROs (003 => 3)
         strcpy(b, op2); if (b[0] == '0') { stripi0(b); b_L = (i64)strlen(b); }
