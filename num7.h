@@ -3,7 +3,7 @@
 /**
  * @file   num7.h
  * @author Giovanni Cipriani <giocip7@gmail.com>
- * @date   2024
+ * @date   2025
  * @brief  num7 ISO C++14 Standard 64-BIT LIBRARY, ARBITRARY-PRECISION GENERAL PURPOSE ARITHMETIC-LOGIC DECIMAL CLASS FOR AMD64/ARM64 ARCHITECTURE
  *
  * @see https://github.com/giocip/HEADERONLY_num7
@@ -1357,32 +1357,33 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
             T.S = strcmp(T.C, "0.0") ? T.S : 0; //RESET SIGN ONLY FOR ZERO
             return T;
         }
-        /// NUM IN-LINE /// BANK ROUND OF THE OBJECT DECIMAL DIGITS TO THE SPECIFIED NUMBER (LOSS PRECISION), CODE: NUM a("000123.12345678900");  a.round_bank(4).print("\n");     //123.1234
+        /// NUM IN-LINE /// BANK ROUND OF THE OBJECT DECIMAL DIGITS TO THE SPECIFIED NUMBER (LOSS PRECISION), CODE: NUM a("000123.123450000"); a.round_bank(4).print("\n"); //123.1234
         NUM& round_bank(i64 d = 2) {
             static char* as;
             static char** asp;
             static NUM result;
-            //*this = "250.995"; d = -2; //TEST CODE
+            //*this = "250.9650"; d = 2;   //TEST CODE - FLOATING POINT (250.965 => 250.96 d=2)
+            //*this = "3.255"; d = 2;     //
+            //*this = "250.0"; d = -2;   //TEST CODE - INTEGER (250 => 200 d=-2)
             result = *this;             //SAVE THE OBJECT 
             result.S = 0;              //POSITIVE COMPUTING...
             as = exp2num(result);
             asp = split(as, ".");
             if (d > 0 && d >= (i64)strlen(asp[1])) { free(asp[0]); free(as); return result = *this; } //CHECKING DECIMAL PART AND RIGHT LIMIT
             if (d > 0) { //DECIMAL PART ROUNDING HALF TO EVEN
-                if (!((asp[1][d - 1] - '0') % 2) && asp[1][d] == '5') { //75.305=>75.3 (-75.305=>-75.3) SYMMETRIC LOGIC (d=2)
+                if (!((asp[1][d - 1] - '0') % 2) && asp[1][d] == '5' && asp[1][d + 1] == '\0') { //75.305=>75.3 (-75.305=>-75.3) SYMMETRIC LOGIC (d=2)
                     free(asp[0]); free(as);                            //1.25=>1.2 (-1.25=>-1.2) (d=1)
-                    NUM ten("10.0");
-                    //result -= (ten ^ -d) * "0.5"; 
-                    result -= ten.shift(-d - 1) * "0.5";
+                    NUM ten("10.0");                    
+                    result -= ten.shift(-d - 1) * "0.5";             //result -= (ten ^ -d) * "0.5"; 
                     result = result.trunk(d);
                     result.S = this->S;                            //RESET ORIGINAL SIGN
                     if (!strcmp(result.C, "0.0")) result.S = 0;   //ZERO WITHOUT MINUS SIGN
                     return result;
                 }
             }
-            else if (d == 0) {  //0.5=>0.0 (-0.5=>0.0)  2.5=>2.0 (-2.5=>-2.0) SYMMETRIC LOGIC (d=0)
+            else if (d == 0) { //0.5=>0.0 (-0.5=>0.0)  2.5=>2.0 (-2.5=>-2.0) SYMMETRIC LOGIC (d=0)
                 i64 asp0_len = (i64)strlen(asp[0]);
-                if (!((asp[0][asp0_len - 1] - '0') % 2) && asp[1][0] == '5') {
+                if (!((asp[0][asp0_len - 1] - '0') % 2) && asp[1][0] == '5' && asp[1][d + 1] == '\0') {
                     free(asp[0]); free(as);
                     result -= "0.5";
                     result = result.trunk(d);
@@ -1391,26 +1392,26 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
                     return result;
                 }
             }
-            else {  //d < 0
+            else { //d < 0  => CHECKING ONLY INTEGERs 
                 i64 asp0_len = (i64)strlen(asp[0]);
-                if (asp0_len + d < 0) { free(asp[0]); free(as); return result = "0.0"; } //CHECKING INTEGER PART 
-                if ((asp0_len + d - 1) < 0 && asp[0][asp0_len + d] == '5') {            //LEFT LIMIT
-                    free(asp[0]); free(as); //50.995=>0.0 (-50.995=>0.0) (d=-2)        //5.0=>0.0 (-5.0=>0.0) SYMMETRIC LOGIC (d=-1)
-                    result -= 5;
-                    result = result.trunk(d);
-                    result.S = this->S;                          //RESET ORIGINAL SIGN
-                    if (!strcmp(result.C, "0.0")) result.S = 0; //ZERO WITHOUT MINUS SIGN
+                if (asp0_len + d < 0) { free(asp[0]); free(as); return result = "0.0"; } 
+                if (!strcmp(result.C, "5.0")) { //STARTING LIMIT +-5.0 => 0.0 d=-1
+                    strcpy(result.C, "0.0"); result.E = 0; result.S = 0;
+                    strcpy(result.CE, "0.0e0"); result.len_I = 1; result.len_F = 1;
                     return result;
-                }
-                else if (!((asp[0][asp0_len + d - 1] - '0') % 2) && asp[0][asp0_len + d] == '5') {
-                    free(asp[0]); free(as); //256.35=>200.0 (-256.35=>-200.0) (d=-2)   //45.0=>40.0  (-45.0=>-40.0) SYMMETRIC LOGIC (d=-1) 
-                    NUM ten("10.0");
-                    //result -= (ten ^ -d) * "0.5"; 
-                    result -= ten.shift(-d - 1) * "0.5";
-                    result = result.trunk(d);
-                    result.S = this->S;                           //RESET ORIGINAL SIGN
-                    if (!strcmp(result.C, "0.0")) result.S = 0;  //ZERO WITHOUT MINUS SIGN
-                    return result;
+                } 
+                if ( !strcmp(asp[1], "0") && !((asp[0][asp0_len + d - 1] - '0') % 2) && asp[0][asp0_len + d] == '5' ) {
+                    i64 bank = 1, i = asp0_len + d + 1;
+                    for ( ; i < asp0_len; i++) if(as[i] != '0') { bank = 0; exit; } //FLAG OFF (SCAN FOR ONLY ZEROs)
+                    if (bank) {
+                        free(asp[0]); free(as); //250.0=>200.0 (-250.0=>-200.0) (d=-2)   //45.0=>40.0  (-45.0=>-40.0) SYMMETRIC LOGIC (d=-1) 
+                        NUM ten("10.0");
+                        result -= ten.shift(-d - 1) * "0.5";            //result -= (ten ^ -d) * "0.5"; 
+                        result = result.trunk(d);
+                        result.S = this->S;                           //RESET ORIGINAL SIGN
+                        if (!strcmp(result.C, "0.0")) result.S = 0;  //ZERO WITHOUT MINUS SIGN
+                        return result;
+                    }
                 }
             }
             free(asp[0]); free(as); result = result.round(d); //STANDARD ROUNDING
