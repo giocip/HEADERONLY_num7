@@ -1402,7 +1402,7 @@ namespace num7 {          // STARTING CURLY BRACKET num7 namespace
                 } 
                 if ( !strcmp(asp[1], "0") && !((asp[0][asp0_len + d - 1] - '0') % 2) && asp[0][asp0_len + d] == '5' ) {
                     i64 bank = 1, i = asp0_len + d + 1;
-                    for ( ; i < asp0_len; i++) if(as[i] != '0') { bank = 0; exit; } //FLAG OFF (SCAN FOR ONLY ZEROs)
+                    for ( ; i < asp0_len; i++) if(as[i] != '0') { bank = 0; break; } //FLAG OFF (SCAN FOR ONLY ZEROs)
                     if (bank) {
                         free(asp[0]); free(as); //250.0=>200.0 (-250.0=>-200.0) (d=-2)   //45.0=>40.0  (-45.0=>-40.0) SYMMETRIC LOGIC (d=-1) 
                         NUM ten("10.0");
